@@ -1,0 +1,57 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# 876. Middle of the Linked List
+
+## Section
+
+```elixir
+defmodule ListNode do
+  @type t :: %__MODULE__{
+          val: integer,
+          next: ListNode.t() | nil
+        }
+  defstruct val: 0, next: nil
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, ListNode, <<70, 79, 82, 49, 0, 0, 7, ...>>, %ListNode{next: nil, val: 0}}
+```
+
+```elixir
+head = %ListNode{
+  next: %ListNode{
+    next: %ListNode{
+      next: %ListNode{next: %ListNode{next: nil, val: 5}, val: 4},
+      val: 3
+    },
+    val: 2
+  },
+  val: 1
+}
+
+defmodule Solution do
+  @spec middle_node(head :: ListNode.t() | nil) :: ListNode.t() | nil
+  def middle_node(head) do
+    do_middle_node(head, head)
+  end
+
+  def do_middle_node(%ListNode{next: %ListNode{}} = fast, slow) do
+    do_middle_node(fast.next.next, slow.next)
+  end
+
+  def do_middle_node(_fast, slow) do
+    slow
+  end
+end
+
+Solution.middle_node(head)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%ListNode{next: %ListNode{next: %ListNode{next: nil, val: 5}, val: 4}, val: 3}
+```
