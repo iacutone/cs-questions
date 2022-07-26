@@ -24,6 +24,19 @@ end
 defmodule Solution do
   @spec remove_elements(head :: ListNode.t() | nil, val :: integer) :: ListNode.t() | nil
   def remove_elements(head, val) do
+    do_remove_node(head, val)
+  end
+
+  defp do_remove_node(nil, _val) do
+    nil
+  end
+
+  defp do_remove_node(%{val: val, next: next}, val) do
+    do_remove_node(next, val)
+  end
+
+  defp do_remove_node(%{val: value, next: next}, val) do
+    %ListNode{val: value, next: do_remove_node(next, val)}
   end
 end
 
@@ -45,4 +58,16 @@ head = %ListNode{
 }
 
 Solution.remove_elements(head, 6)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%ListNode{
+  next: %ListNode{
+    next: %ListNode{next: %ListNode{next: %ListNode{next: nil, val: 5}, val: 4}, val: 3},
+    val: 2
+  },
+  val: 1
+}
 ```

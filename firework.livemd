@@ -1,0 +1,61 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Firework :-(
+
+## Section
+
+```elixir
+# Algorithm
+defmodule Evaluator do
+  @moduledoc """
+  Write an evaluator for an arithmetic expression.
+
+  Part 1:
+  @type expr() :: integer() | {:add | :sub | :mul, expr(), expr()}
+  @spec eval(expr()) :: integer()
+
+  {:add, {:mul, 2, 2}, 6} == 10
+  {:sub, 4, {:add, 1, 2}} == 1
+
+  Part 2:
+  @type expr() :: integer() | {:add | :sub | :mul, expr(), expr()} | {:define, String.t(), expr(), expr()} | {:ref, String.t()}
+
+  {:define, “x”, {:mul, 2, 2}, {:mul, {:add, {:ref, “x”}, 1}, {:ref, “x”}}} == 20
+
+  Elixir:
+    x = 2*2
+    (x+1)*x
+  """
+
+  @type expr() :: integer() | {:add | :sub | :mul, expr(), expr()}
+  @spec eval(expr()) :: integer()
+  ## Define eval here
+  def eval(tuple) when is_integer(tuple), do: tuple
+
+  def eval({:add, num, num1}) do
+    eval(num) + eval(num1)
+  end
+
+  def eval({:sub, num, num1}) do
+    eval(num) - eval(num1)
+  end
+
+  def eval({:mul, num, num1}) do
+    eval(num) * eval(num1)
+  end
+end
+
+# 10
+expr = {:add, {:mul, 2, 2}, 6}
+
+Evaluator.eval(expr)
+
+# expr = {:define, “x”, {:mul, 2, 2}, {:mul, {:add, {:ref, “x”}, 1}, {:ref, “x”}}}
+# Evaluator.eval2(expr)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+10
+```

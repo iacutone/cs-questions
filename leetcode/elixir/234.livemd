@@ -1,8 +1,8 @@
 <!-- livebook:{"persist_outputs":true} -->
 
-# Untitled notebook
+# 234. Palindrome Linked List
 
-## 234. Palindrome Linked List
+## Problem
 
 ```elixir
 defmodule ListNode do
@@ -21,14 +21,6 @@ end
 ```
 
 ```elixir
-head = %ListNode{
-  next: %ListNode{
-    next: %ListNode{next: %ListNode{next: nil, val: 1}, val: 2},
-    val: 2
-  },
-  val: 1
-}
-
 defmodule Solution do
   @spec is_palindrome(head :: ListNode.t() | nil) :: boolean
   def is_palindrome(head) do
@@ -49,6 +41,14 @@ defmodule Solution do
     list == Enum.reverse(list)
   end
 end
+
+head = %ListNode{
+  next: %ListNode{
+    next: %ListNode{next: %ListNode{next: nil, val: 1}, val: 2},
+    val: 2
+  },
+  val: 1
+}
 
 Solution.is_palindrome(head)
 ```

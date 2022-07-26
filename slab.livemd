@@ -1,0 +1,228 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Slab
+
+## Problem
+
+Hello 👋
+
+Hi there, thank you for taking the time to interview with us today. This question is abstracted from our codebase, and we hope you will enjoy solving this problem.
+
+The question might be harder than your initial reaction. Please read everything in this instruction carefully.
+
+Good luck!
+Problem
+
+Rich text in Slab is represented in a JSON-based format for consistency and specificity. A simplified version for a nested list might look something like this:
+
+[
+  { "text": "One",   "indent": 0, "type": "ordered" },
+  { "text": "Two",   "indent": 0, "type": "ordered" },
+  { "text": "Alpha", "indent": 1, "type": "bullet"  },
+  { "text": "Beta",  "indent": 1, "type": "bullet"  },
+  { "text": "I",     "indent": 2, "type": "ordered" },
+  { "text": "II",    "indent": 2, "type": "ordered" },
+  { "text": "Three", "indent": 0, "type": "ordered" }
+]
+
+Which the front end will render to something like:
+
+1. One
+2. Two
+   • Alpha
+   • Beta
+    i. I
+    ii. II
+3. Three
+
+It is sometimes necessary to convert this JSON representation into HTML for exporting, emails, or pasting into other applications.
+
+Your task is to write a program that handles this conversion. The above output would look like this:
+
+<ol>
+  <li>One</li>
+  <li>Two
+    <ul>
+      <li>Alpha</li>
+      <li>Beta
+        <ol>
+          <li>I</li>
+          <li>II</li>
+        </ol>
+      </li>
+    </ul>
+  </li>
+  <li>Three</li>
+</ol>
+
+Submission
+
+Your main function should be called deltaToHtml. It should accept an array/list as the input, and returns a string as the output.
+Input
+
+You do not need to parse a JSON string. You can assume the input is already an array. In order, each item in the array represents an item in the list. Each item has 3 attributes:
+
+```
+text: the pure text content to be displayed in the item
+indent: item's indent level. You can assume indent will at most increase by 1 from one item to its next item.
+type: what type of list is the item in, the possible values are:
+    bullet: <ul> type list
+    ordered: <ol> type list
+```
+
+Output
+
+The HTML presentation of the input.
+
+Notes:
+
+```
+In our examples, we included indentations for readability. Your submission does not need to output any white space.
+According to the HTML spec, a nested ol/ul element needs to be contained in a li element. For example, both of the following examples are incorrect:
+```
+
+<-->
+<ol>
+  <li>One</li>
+  <li>Two</li>
+  <ul>
+    <li>Alpha</li>
+    <li>Beta</li>
+  </ul>
+  <li>Three</li>
+</ol>
+
+<-- Valid HTML syntax, but does NOT represent an expected nested list -->
+<ol>
+  <li>One</li>
+  <li>Two</li>
+  <li>
+    <ul>
+      <li>Alpha</li>
+      <li>Beta</li>
+    </ul>
+  </li>
+  <li>Three</li>
+</ol>
+
+Additional Info
+
+    You may choose any language to implement your program by changing the language setting in CoderPad.
+    You have limited time. We do care about code quality, but correctness comes first.
+    If you have extra time, you could use it on testing, improving readability, writing docs, etc.
+    http://htmlformatter.com can be helpful for reading the output.
+    If you have any questions, please email chengyin@slab.com.
+</-->
+
+```elixir
+defmodule Eval do
+  def deltaToHtml(input) do
+    Enum.with_index(input, fn row, index ->
+      next_row = Enum.at(input, index + 1)
+      do_insert(row, next_row)
+    end)
+  end
+
+  def do_insert(
+        %{indent: 0, text: text, type: "ordered"},
+        %{indent: 0, text: _text, type: "ordered"}
+      ) do
+    {"li", text, "/li"}
+  end
+
+  def do_insert(%{indent: 0, text: text, type: _type}, nil) do
+    {"li", text, "/li"}
+  end
+
+  def do_insert(
+        %{indent: indent, text: text, type: "ordered"},
+        %{indent: _indent, text: _text, type: "bullet"}
+      ) do
+    {"li", text, "/li"}
+  end
+
+  def do_insert(
+        %{indent: indent, text: text, type: "bullet"},
+        %{indent: indent, text: _text, type: "bullet"}
+      ) do
+    {"li", text, "/li"}
+  end
+
+  def do_insert(
+        %{indent: _indent, text: text, type: "bullet"},
+        %{indent: indent, text: _text, type: "ordered"}
+      ) do
+    {"li", text, "/li"}
+  end
+
+  def do_insert(
+        %{indent: indent, text: text, type: "ordered"},
+        %{indent: indent, text: _text, type: "ordered"}
+      ) do
+    {"li", text, "/li"}
+  end
+
+  def do_insert(
+        %{indent: _indent, text: text, type: "ordered"},
+        %{indent: indent, text: _text, type: "ordered"}
+      ) do
+    {"li", text, "/li"}
+  end
+end
+
+# <ol>
+#   <li>One</li>
+#   <li>Two
+#     <ul>
+#       <li>Alpha</li>
+#       <li>Beta
+#         <ol>
+#           <li>I</li>
+#           <li>II</li>
+#         </ol>
+#       </li>
+#     </ul>
+#   </li>
+#   <li>Three</li>
+# </ol>
+
+input = [
+  %{text: "One", indent: 0, type: "ordered"},
+  %{text: "Two", indent: 0, type: "ordered"},
+  %{text: "Alpha", indent: 1, type: "bullet"},
+  %{text: "Beta", indent: 1, type: "bullet"},
+  %{text: "I", indent: 2, type: "ordered"},
+  %{text: "II", indent: 2, type: "ordered"},
+  %{text: "Three", indent: 0, type: "ordered"}
+]
+
+Eval.deltaToHtml(input)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+warning: variable "indent" is unused (if the variable is not meant to be used, prefix it with an underscore)
+  /Users/iacutone/cs-questions/slab.livemd#cell:21: Eval.do_insert/2
+
+warning: variable "indent" is unused (if the variable is not meant to be used, prefix it with an underscore)
+  /Users/iacutone/cs-questions/slab.livemd#cell:36: Eval.do_insert/2
+
+warning: variable "indent" is unused (if the variable is not meant to be used, prefix it with an underscore)
+  /Users/iacutone/cs-questions/slab.livemd#cell:50: Eval.do_insert/2
+
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[
+  {"li", "One", "/li"},
+  {"li", "Two", "/li"},
+  {"li", "Alpha", "/li"},
+  {"li", "Beta", "/li"},
+  {"li", "I", "/li"},
+  {"li", "II", "/li"},
+  {"li", "Three", "/li"}
+]
+```

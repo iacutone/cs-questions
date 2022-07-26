@@ -1,0 +1,76 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# 21. Merge Two Sorted Lists
+
+## Problem
+
+```elixir
+defmodule ListNode do
+  @type t :: %__MODULE__{
+          val: integer,
+          next: ListNode.t() | nil
+        }
+  defstruct val: 0, next: nil
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, ListNode, <<70, 79, 82, 49, 0, 0, 7, ...>>, %ListNode{next: nil, val: 0}}
+```
+
+```elixir
+defmodule Solution do
+  @spec merge_two_lists(list1 :: ListNode.t() | nil, list2 :: ListNode.t() | nil) ::
+          ListNode.t() | nil
+  def merge_two_lists(list1, list2) do
+    do_merge(list1, list2)
+  end
+
+  defp do_merge(%{next: nil, val: val}, node), do: %ListNode{val: val, next: node}
+  defp do_merge(node, %{next: nil, val: val}), do: %ListNode{val: val, next: node}
+
+  defp do_merge(%{val: val1} = node1, %{val: val2} = node2) do
+    IO.inspect(node1, label: "node1")
+    IO.inspect(node2, label: "node2")
+
+    if val1 < val2 do
+      %ListNode{val: val1, next: do_merge(node1.next, node2)}
+    else
+      %ListNode{val: val2, next: do_merge(node1, node2.next)}
+    end
+  end
+end
+
+list1 = %ListNode{next: %ListNode{next: %ListNode{next: nil, val: 4}, val: 2}, val: 1}
+list2 = %ListNode{next: %ListNode{next: %ListNode{next: nil, val: 4}, val: 3}, val: 1}
+
+Solution.merge_two_lists(list1, list2)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+node1: %ListNode{next: %ListNode{next: %ListNode{next: nil, val: 4}, val: 2}, val: 1}
+node2: %ListNode{next: %ListNode{next: %ListNode{next: nil, val: 4}, val: 3}, val: 1}
+node1: %ListNode{next: %ListNode{next: %ListNode{next: nil, val: 4}, val: 2}, val: 1}
+node2: %ListNode{next: %ListNode{next: nil, val: 4}, val: 3}
+node1: %ListNode{next: %ListNode{next: nil, val: 4}, val: 2}
+node2: %ListNode{next: %ListNode{next: nil, val: 4}, val: 3}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%ListNode{
+  next: %ListNode{
+    next: %ListNode{
+      next: %ListNode{next: %ListNode{next: %ListNode{next: nil, val: 4}, val: 3}, val: 4},
+      val: 2
+    },
+    val: 1
+  },
+  val: 1
+}
+```

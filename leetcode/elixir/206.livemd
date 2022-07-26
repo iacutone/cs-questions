@@ -1,6 +1,6 @@
 <!-- livebook:{"persist_outputs":true} -->
 
-# 876. Middle of the Linked List
+# 206. Reverse Linked List
 
 ## Problem
 
@@ -22,17 +22,17 @@ end
 
 ```elixir
 defmodule Solution do
-  @spec middle_node(head :: ListNode.t() | nil) :: ListNode.t() | nil
-  def middle_node(head) do
-    do_middle_node(head, head)
+  @spec reverse_list(head :: ListNode.t() | nil) :: ListNode.t() | nil
+  def reverse_list(head) do
+    do_reverse_list(head, nil)
   end
 
-  def do_middle_node(%ListNode{next: %ListNode{}} = fast, slow) do
-    do_middle_node(fast.next.next, slow.next)
+  defp do_reverse_list(nil, reversed) do
+    reversed
   end
 
-  def do_middle_node(_fast, slow) do
-    slow
+  defp do_reverse_list(%{val: val} = node, reversed) do
+    do_reverse_list(node.next, %ListNode{val: val, next: reversed})
   end
 end
 
@@ -47,11 +47,17 @@ head = %ListNode{
   val: 1
 }
 
-Solution.middle_node(head)
+Solution.reverse_list(head)
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
-%ListNode{next: %ListNode{next: %ListNode{next: nil, val: 5}, val: 4}, val: 3}
+%ListNode{
+  next: %ListNode{
+    next: %ListNode{next: %ListNode{next: %ListNode{next: nil, val: 1}, val: 2}, val: 3},
+    val: 4
+  },
+  val: 5
+}
 ```
